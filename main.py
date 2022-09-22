@@ -70,15 +70,46 @@ for i in range(len(df.index)):
 salesList.append(int(df['WorldwideSales'][maxIndex].replace(',', '')) / 1000000)
 xaxisList.append(str(df['Year'][maxIndex]) + ': ' + str(df['Album'][maxIndex]))
 
-salesArray = np.array(salesList)
-xaxisArray = np.array(xaxisList)
+salesArray = np.flip(np.array(salesList))
+xaxisArray = np.flip(np.array(xaxisList))
 plt.clf()
+plt.figure(figsize=(10, 7))
+plt.barh(np.arange(len(salesArray)), salesArray)
 plt.title('Highest Selling Album Sales per Year')
-plt.xlabel('Year and Highest Selling Album')
-plt.ylabel('Top 10 Album Sales (Per million)')
-plt.xticks(np.arange(32), xaxisArray, rotation=90)
-plt.plot(salesArray)
+plt.ylabel("Year and Highest Selling Album")
+plt.xlabel('Top 10 Album Sales (Per million)')
+plt.yticks(np.arange(32), labels=xaxisArray)
+plt.subplots_adjust(left=0.4)
 save_plot('Highest Selling Album Sales per Year', plt)
+
+# Top 10 albums' track amount by year
+currentYear = 1990
+totalTracks = 0
+trackList = []
+yearList = ['1990']
+# Calculate total number of tracks for each year from music.csv
+for i in range(len(df.index)):
+    tracks = df['Tracks'][i]
+    year = df['Year'][i]
+    if currentYear != year:
+        currentYear = year
+        yearList.append(str(currentYear))
+        trackList.append(int(totalTracks))
+        totalTracks = 0
+    totalTracks += int(tracks)
+trackList.append(int(totalTracks))
+
+# Configure plot settings
+trackArray = np.array(trackList)
+yearArray = np.array(yearList)
+plt.clf()
+plt.figure(figsize=(6.4, 4.8))
+plt.title("Top 10 Albums' Track Amount by Year")
+plt.xlabel('Year')
+plt.ylabel('Top 10 Album Track Amount')
+plt.xticks(np.arange(32), yearArray, rotation=60)
+plt.plot(trackArray)
+save_plot("Top 10 Albums' Track Amount by Year", plt)
 
 
 exit()
