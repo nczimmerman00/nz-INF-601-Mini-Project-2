@@ -111,5 +111,48 @@ plt.xticks(np.arange(32), yearArray, rotation=60)
 plt.plot(trackArray)
 save_plot("Top 10 Albums' Track Amount by Year", plt)
 
+# Top 10 album sales by genre
+# Get all genres listed in music.csv
+genreList = []
+for i in range(len(df.index)):
+    if df['Genre'][i] not in genreList:
+        genreList.append(df['Genre'][i])
+# Initialize dictionary to hold totals
+genreDictionary = dict()
+for genre in genreList:
+    genreDictionary[genre] = 0
+# Find totals for each genre
+currentYear = 1990
+for i in range(len(df.index)):
+    genreDictionary[df['Genre'][i]] += (int(df['WorldwideSales'][i].replace(',', '')) / 1000000)
+
+# Sort the dictionary
+genreList = []
+salesList = []
+topGenre = None
+while len(genreDictionary) != 0:
+    for key in genreDictionary.keys():
+        if topGenre is None:
+            topGenre = key
+        elif genreDictionary[key] > genreDictionary[topGenre]:
+            topGenre = key
+    genreList.append(topGenre)
+    salesList.append(genreDictionary[topGenre])
+    del genreDictionary[topGenre]
+    topGenre = None
+
+genreArray = np.flip(np.array(genreList))
+salesArray = np.flip(np.array(salesList))
+
+# Configure Plot
+plt.clf()
+plt.barh(np.arange(salesArray.size), salesArray)
+plt.title('Top 10 Album Sales by Genre Since 1990')
+plt.ylabel("Genre")
+plt.xlabel('Sales per Million')
+plt.yticks(np.arange(salesArray.size), labels=genreArray)
+plt.subplots_adjust(left=0.15)
+save_plot('Top 10 Album Sales by Genre', plt)
+
 
 exit()
